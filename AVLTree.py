@@ -1,9 +1,9 @@
-#id1:
-#name1:
-#username1:
-#id2:
-#name2:
-#username2:
+#id1: 207273947
+#name1: itay mutzafi
+#username1: itaymutzafi@mail.tau.ac.il
+#id2: 322890047
+#name2: aya rotbart
+#username2: ayarotbart@mail.tau.ac.il
 
 
 """A class represnting a node in an AVL tree"""
@@ -31,8 +31,9 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return False
-
+		if self.height == -1:
+			return False
+		return True
 
 """
 A class implementing an AVL tree.
@@ -56,10 +57,22 @@ class AVLTree(object):
 	and e is the number of edges on the path between the starting node and ending node+1.
 	"""
 	def search(self, key):
+		cnt = 1
+		node = self.root
+		while node.key != key and node != None:
+			if node.key < key:
+				node = node.right
+				cnt +=1
+			if node.key > key:
+				node = node.left
+				cnt +=1
+		if node != None:
+			return node, cnt	
 		return None, -1
 
+	"""time complexity: O(h) while h is tree height.
 
-	"""searches for a node in the dictionary corresponding to the key, starting at the max
+	"searches for a node in the dictionary corresponding to the key, starting at the max
         
 	@type key: int
 	@param key: a key to be searched
@@ -68,6 +81,27 @@ class AVLTree(object):
 	and e is the number of edges on the path between the starting node and ending node+1.
 	"""
 	def finger_search(self, key):
+		if self.root == None:
+			return None, -1
+		if key <= self.root.key:
+			return self.search(key)
+		
+		#else - search for key in the right subtree
+		node = self.max_node
+		e = 1
+		while node.key > key and node.parent != None: #search for the first key that is smaller than key
+			node = node.parent
+			e+=1
+		#search the key, begining the node we found	
+		while node.key != key and node != None:
+			if node.key < key:
+				node = node.right
+				e +=1
+			if node.key > key:
+				node = node.left
+				e +=1
+		if node != None:
+			return node, e	 
 		return None, -1
 
 
@@ -156,7 +190,12 @@ class AVLTree(object):
 	@returns: the maximal node, None if the dictionary is empty
 	"""
 	def max_node(self):
-		return None
+		if self.root == None:
+			return None
+		node = self.root
+		while node.right != None:
+			node = node.right
+		return node
 
 	"""returns the number of items in dictionary 
 
@@ -173,4 +212,6 @@ class AVLTree(object):
 	@returns: the root, None if the dictionary is empty
 	"""
 	def get_root(self):
-		return None
+		if self.root == None:
+			return None
+		return self.root
