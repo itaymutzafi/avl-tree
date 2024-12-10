@@ -23,7 +23,7 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
-		
+		self.size = 0 
 
 	"""returns whether self is not a virtual node 
 
@@ -57,18 +57,16 @@ class AVLTree(object):
 	and e is the number of edges on the path between the starting node and ending node+1.
 	"""
 	def search(self, key):
-		cnt = 1
+		e = 1
 		node = self.root
 		while node.key != key and node != None:
 			if node.key < key:
 				node = node.right
-				cnt +=1
+				e +=1
 			if node.key > key:
 				node = node.left
-				cnt +=1
-		if node != None:
-			return node, cnt	
-		return None, -1
+				e +=1
+		return node, e
 
 	"""time complexity: O(h) while h is tree height.
 
@@ -100,9 +98,7 @@ class AVLTree(object):
 			if node.key > key:
 				node = node.left
 				e +=1
-		if node != None:
-			return node, e	 
-		return None, -1
+		return node, e 
 
 
 	"""inserts a new node into the dictionary with corresponding key and value (starting at the root)
@@ -118,6 +114,23 @@ class AVLTree(object):
 	and h is the number of PROMOTE cases during the AVL rebalancing
 	"""
 	def insert(self, key, val):
+		new_node = AVLNode(key,val)
+		e=0
+		h=0
+		node = self.root
+		parent = None
+		while node!=None: #find the place for the new node
+			parent = node
+			if node.key > key:
+				node = node.left
+			if node.key < key:
+				node = node.right
+			e+=1
+		if parent.key < key:
+			parent.right = new_node
+		if parent.key > key:
+			parent.left = new_node
+		
 		return None, -1, -1
 
 
@@ -181,8 +194,16 @@ class AVLTree(object):
 	@returns: a sorted list according to key of touples (key, value) representing the data structure
 	"""
 	def avl_to_array(self):
-		return None
-
+		L = []
+		self.root.in_order(L)
+		return L
+	
+	def in_order(node, L):
+		if node == None: return None
+		node.left.in_order(L)
+		L.append(node.key,node.val)
+		node.right.in_order(L)
+	"""in order scans all Treenode, O(n)""" 
 
 	"""returns the node with the maximal key in the dictionary
 
@@ -203,7 +224,7 @@ class AVLTree(object):
 	@returns: the number of items in dictionary 
 	"""
 	def size(self):
-		return -1	
+		return self.root.size	
 
 
 	"""returns the root of the tree representing the dictionary
