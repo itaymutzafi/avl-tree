@@ -59,7 +59,7 @@ class AVLTree(object):
 	def search(self, key):
 		e = 1
 		node = self.root
-		while node.key != key and node != None:
+		while node != None and node.key != key:
 			if node.key < key:
 				node = node.right
 				e +=1
@@ -85,7 +85,7 @@ class AVLTree(object):
 			return self.search(key)
 		
 		#else - search for key in the right subtree
-		node = self.max_node
+		node = self.max_node()
 		e = 1
 		while node.key > key and node.parent != None: #search for the first key that is smaller than key
 			node = node.parent
